@@ -1,0 +1,48 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model InboxItem {
+  id        String   @id @default(cuid())
+  text      String
+  createdAt DateTime @default(now())
+}
+
+model WorkItem {
+  id         String   @id @default(cuid())
+  kind       String   // "task" | "project"
+  title      String
+  outcome    String?
+  nextAction String?
+  status     String   @default("backlog") // backlog|next|now|waiting|done
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+model WhiteboardNote {
+  id        String   @id @default(cuid())
+  text      String
+  x         Int      @default(60)
+  y         Int      @default(60)
+  w         Int      @default(220)
+  h         Int      @default(140)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+model ActivityLog {
+  id         String   @id @default(cuid())
+  createdAt  DateTime @default(now())
+
+  eventType  String   // e.g. "INBOX_TRIAGE_APPLIED", "WORK_MOVED_DONE"
+  entityType String   // "inbox" | "work" | "whiteboard"
+  entityId   String
+  note       String
+
+  @@index([createdAt])
+  @@index([entityType, entityId])
+}
+

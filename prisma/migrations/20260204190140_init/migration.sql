@@ -1,0 +1,30 @@
+-- CreateTable
+CREATE TABLE "InboxItem" (
+    "id" TEXT NOT NULL PRIMARY KEY,
+    "text" TEXT NOT NULL,
+    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+-- CreateTable
+CREATE TABLE "WorkItem" (
+    "id" TEXT NOT NULL PRIMARY KEY,
+    "kind" TEXT NOT NULL,
+    "title" TEXT NOT NULL,
+    "outcome" TEXT,
+    "nextAction" TEXT,
+    "status" TEXT NOT NULL DEFAULT 'backlog',
+    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" DATETIME NOT NULL
+);
+
+-- CreateTable
+CREATE TABLE "WhiteboardNote" (
+    "id" TEXT NOT NULL PRIMARY KEY,
+    "text" TEXT NOT NULL,
+    "x" INTEGER NOT NULL DEFAULT 60,
+    "y" INTEGER NOT NULL DEFAULT 60,
+    "w" INTEGER NOT NULL DEFAULT 220,
+    "h" INTEGER NOT NULL DEFAULT 140,
+    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" DATETIME NOT NULL
+);

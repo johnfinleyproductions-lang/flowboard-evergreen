@@ -1,36 +1,46 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Flowboard
 
-## Getting Started
+A personal GTD command board: capture to an **Inbox**, **triage** into work,
+move items across a **Kanban** (backlog / next / now / waiting / done), think on
+a draggable **Whiteboard**, and watch an **Activity** feed of everything you do.
 
-First, run the development server:
+Stack: Next.js 16 (App Router) + TypeScript + Tailwind v4 + Prisma 7 with
+better-sqlite3 + zod. No external network dependency at runtime (an Ollama LLM
+is optional for triage; the board ships a local heuristic fallback).
+
+## Run the demo
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+pnpm install      # installs deps; postinstall runs `prisma generate`
+pnpm setup        # prisma generate + db push + seed demo data
+pnpm dev          # http://localhost:3000
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+`pnpm setup` prints `Seeded: { inbox: 6, work: 10, notes: 5, activity: 8 }`.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Reset the demo data anytime (re-seeds, idempotent):
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+pnpm db:reset
+```
 
-## Learn More
+## Scripts
 
-To learn more about Next.js, take a look at the following resources:
+- `dev` / `start` - run on port **3000**
+- `build` - `prisma generate && next build`
+- `db:push` - push the Prisma schema into the SQLite DB
+- `db:seed` - run `prisma/seed.ts` (idempotent demo data)
+- `db:reset` - force-reset the schema and re-seed
+- `setup` - generate + push + seed in one shot
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Data
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+SQLite lives at `data/flowboard.db` (gitignored), configured via `DATABASE_URL`
+in `.env`. Four models: `InboxItem`, `WorkItem`, `WhiteboardNote`, `ActivityLog`.
 
-## Deploy on Vercel
+## Optional: Ollama triage
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+The **Triage Inbox** button works fully offline using a deterministic local
+heuristic. To enhance suggestions with a local LLM, set `OLLAMA_URL` (and
+optionally `OLLAMA_MODEL`) in `.env` / `.env.local`. If Ollama is unreachable
+the route silently falls back to the heuristic - it never blocks or errors.
